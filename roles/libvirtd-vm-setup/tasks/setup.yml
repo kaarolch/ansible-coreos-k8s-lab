@@ -1,0 +1,58 @@
+---
+
+- name: Prepare folder stucture
+  file:
+    path: "{{item}}"
+    recurse: yes
+    state: directory
+  with_items:
+    - "{{ libvirt_path }}/images/{{ template_name }}"
+    - "{{ libvirt_path }}/ign_cfg"
+
+- name: Download images
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ libvirt_path }}/images/{{ template_name }}/{{ item | basename }}"
+  with_items:
+    - "{{ coreos_key }}"
+    - "{{ coreos_image }}"
+    - "{{ coreos_image }}.sig"
+
+- name: Import GPG coreos_key
+  command: "gpg --import --keyid-format LONG {{ libvirt_path }}/images/{{ template_name }}/{{ coreos_key | basename }}"
+
+- name: Check sign
+  command: "gpg --verify {{ libvirt_path }}/images/{{ template_name }}/{{ coreos_image | basename }}.sig"
+  register: command_result
+  failed_when: "'Good signature' not in command_result.stderr"
+
+- name: Extract machine_file
+  command: "bzip2 -d -q -f {{ libvirt_path }}/images/{{ template_name }}/{{ coreos_image | basename }}"
+
+- name: Create neste images
+  command: "qemu-img create -f qcow2 -o backing_file={{ libvirt_path }}/images/{{ template_name }}/{{ (coreos_image | basename | splitext)[0] }} {{ item.img_dir }}/{{ item.name }}.qcow2"
+  with_items: "{{ nodes }}"
+
+- name: Resize images
+  command: "qemu-img resize {{ item.img_dir }}/{{ item.name }}.qcow2 {{ item.disk_size }}"
+  with_items: "{{ nodes }}"
+
+- name: Create provision file
+  become: yes
+  template:
+    src: provision.ign.j2
+    dest: "{{ libvirt_path }}/ign_cfg/{{ item.name }}.ign"
+  with_items: "{{ nodes }}"
+
+- name: Virsh define machine
+  virt:
+    name: "{{ item.name }}"
+    command: define
+    xml: "{{ lookup('template', 'domain.xml.j2') }}"
+  with_items: "{{ nodes }}"
+
+- name: Start vm
+  virt:
+    name: "{{ item.name }}"
+    state: running
+  with_items: "{{ nodes }}"

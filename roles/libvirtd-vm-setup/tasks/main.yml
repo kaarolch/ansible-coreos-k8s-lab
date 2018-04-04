@@ -1,0 +1,14 @@
+---
+
+- include_tasks: bootstrap.yml
+  tags:
+    - bootstrap
+  when: step == 'create'
+
+- include_tasks: setup.yml
+  tags:
+    - setup
+  when: step == 'create'
+
+- include_tasks: destroy.yml
+  when: step == 'destroy'

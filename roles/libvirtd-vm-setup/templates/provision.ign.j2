@@ -1,0 +1,43 @@
+{
+  "ignition": {
+    "config": {},
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {
+    "units": [{
+      "name": "00-eth0.network",
+      "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ (item.ip+'/'+network.mask) |ipaddr('host/prefix') }}\nGateway={{ network.gateway }}"
+    }]
+  },
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "sudo",
+          "docker"
+        ],
+        "name": "{{vm_user}}",
+        "sshAuthorizedKeys": [
+          "{{ ssh_public_key }}"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "filesystem": "root",
+        "group": {},
+        "path": "/etc/hostname",
+        "user": {},
+        "contents": {
+          "source": "data:,{{ item.name }}",
+          "verification": {}
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {}
+}

@@ -1,0 +1,54 @@
+host_user: karol
+ssh_public_key: "{{ lookup('file', '/home/{{host_user}}/.ssh/id_rsa.pub')}}"
+
+libvirt_path: /var/lib/libvirt
+vm_user: ansible
+step: create
+
+network:
+  name: k8s-internal
+  bridge: virtbr1
+  gateway: 192.168.22.1
+  mask: 255.255.255.0
+  dhcp:
+    start: 192.168.22.150
+    end: 192.168.22.250
+
+
+nodes:
+  - name: k8s-node1
+    ip: 192.168.22.11
+    img_dir: '{{ libvirt_path }}/images-ssd1'
+    disk_size: 20G
+    memory: 2
+    cpu: 2
+  - name: k8s-node2
+    ip: 192.168.22.12
+    img_dir: '{{ libvirt_path }}/images-ssd2'
+    disk_size: 20G
+    memory: 2
+    cpu: 2
+  - name: k8s-node3
+    ip: 192.168.22.13
+    img_dir: '{{ libvirt_path }}/images-ssd1'
+    disk_size: 10G
+    memory: 1
+    cpu: 1
+  - name: k8s-node4
+    ip: 192.168.22.14
+    img_dir: '{{ libvirt_path }}/images-ssd2'
+    disk_size: 50G
+    memory: 3
+    cpu: 4
+  - name: k8s-node5
+    ip: 192.168.22.15
+    img_dir: '{{ libvirt_path }}/images-ssd1'
+    disk_size: 50G
+    memory: 3
+    cpu: 4
+  - name: k8s-node6
+    ip: 192.168.22.16
+    img_dir: '{{ libvirt_path }}/images-ssd2'
+    disk_size: 50G
+    memory: 3
+    cpu: 4

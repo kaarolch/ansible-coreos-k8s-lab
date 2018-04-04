@@ -1,0 +1,8 @@
+---
+
+- hosts: localhost
+  connection: localhost
+  vars:
+    - ansible_become: yes
+  roles:
+    - libvirtd-vm-setup
