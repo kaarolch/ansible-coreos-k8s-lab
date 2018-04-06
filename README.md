@@ -8,17 +8,14 @@ This is one of the first version of this playbook.
 Before you run please review all group_vars.
 ```
 ansible-playbook main.yml -K -vvv --extra-vars
-
 ```
 ## Destroy stack
 
 ```
 ansible-playbook main.yml -K -vvv --extra-vars "step=destroy"
-
 ```
 
 # ToDo:
-- destroy
 - modify
 - test playbook
 - refractory some variables dep.
