@@ -1,0 +1,43 @@
+---
+- name: List vms
+  virt:
+    command: list_vms
+  register: vms_list_reg
+
+- name: Destroy vm
+  virt:
+    name: "{{ item.name }}"
+    state: destroyed
+  with_items: "{{ nodes }}"
+  when: item.name in vms_list_reg.list_vms
+
+- name: Undefine machine
+  virt:
+    name: "{{ item.name }}"
+    command: undefine
+  with_items: "{{ nodes }}"
+  when: item.name in vms_list_reg.list_vms
+
+- name: Remove vms qcow2 file
+  file:
+    path: "{{ item.img_dir }}/{{ item.name }}.qcow2"
+    state: absent
+  with_items: "{{ nodes }}"
+  when: item.name in vms_list_reg.list_vms
+
+- name: Virsh get network
+  virt_net:
+    command: info
+  register: networks_reg
+
+- name: Disable network
+  virt_net:
+    command: destroy
+    name: "{{ network.name }}"
+  when: network.name in networks_reg.networks
+
+- name: Undefine network
+  virt_net:
+    command: undefine
+    name: "{{ network.name }}"
+  when: network.name  in networks_reg.networks
