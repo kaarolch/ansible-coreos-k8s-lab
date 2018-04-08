@@ -9,6 +9,8 @@ Before you run please review all group_vars.
 ```
 ansible-playbook main.yml -K -vvv --extra-vars
 ```
+
+To stop or start machines just use extra vars steps equal start or stop.
 ## Destroy stack
 
 ```
@@ -16,6 +18,5 @@ ansible-playbook main.yml -K -vvv --extra-vars "step=destroy"
 ```
 
 # ToDo:
-- modify
 - test playbook
 - refractory some variables dep.

@@ -1,0 +1,6 @@
+---
+- name: Start vms
+  virt:
+    name: "{{ item.name }}"
+    state: running
+  with_items: "{{ nodes }}"

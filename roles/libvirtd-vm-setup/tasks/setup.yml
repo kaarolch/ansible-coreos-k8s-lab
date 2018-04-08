@@ -50,9 +50,3 @@
     command: define
     xml: "{{ lookup('template', 'domain.xml.j2') }}"
   with_items: "{{ nodes }}"
-
-- name: Start vm
-  virt:
-    name: "{{ item.name }}"
-    state: running
-  with_items: "{{ nodes }}"

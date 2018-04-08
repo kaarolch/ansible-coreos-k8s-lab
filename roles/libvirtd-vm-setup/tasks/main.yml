@@ -1,14 +1,25 @@
 ---
 
-- include_tasks: bootstrap.yml
+- name: Prepare network
+  include_tasks: bootstrap.yml
   tags:
     - bootstrap
   when: step == 'create'
 
-- include_tasks: setup.yml
+- name: Prepare machines
+  include_tasks: setup.yml
   tags:
     - setup
   when: step == 'create'
 
-- include_tasks: destroy.yml
+- name: Start machines
+  include_tasks: up.yml
+  when: step in ['create', 'start']
+
+- name: Shutdown machines
+  include_tasks: down.yml
+  when: step in ['destroy', 'stop']
+
+- name: Destroy machines
+  include_tasks: destroy.yml
   when: step == 'destroy'

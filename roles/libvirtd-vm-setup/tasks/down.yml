@@ -1,0 +1,6 @@
+---
+- name: Stop vms
+  virt:
+    name: "{{ item.name }}"
+    state: shutdown
+  with_items: "{{ nodes }}"
