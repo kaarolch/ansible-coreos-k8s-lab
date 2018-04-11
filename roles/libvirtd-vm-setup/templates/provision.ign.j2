@@ -7,7 +7,7 @@
   "networkd": {
     "units": [{
       "name": "00-eth0.network",
-      "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ (item.ip+'/'+network.mask) |ipaddr('host/prefix') }}\nGateway={{ network.gateway }}"
+      "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ (item.ip+'/'+network.mask) |ipaddr('host/prefix') }}\nGateway={{ network.gateway }}\nDNS={{ network.dns}}"
     }]
   },
   "passwd": {
@@ -25,19 +25,28 @@
     ]
   },
   "storage": {
-    "files": [
-      {
-        "filesystem": "root",
-        "group": {},
-        "path": "/etc/hostname",
-        "user": {},
-        "contents": {
-          "source": "data:,{{ item.name }}",
-          "verification": {}
-        },
-        "mode": 420
-      }
-    ]
-  },
+      "files": [
+        {
+          "filesystem": "root",
+          "group": {},
+          "path": "/etc/hostname",
+          "user": {},
+          "contents": {
+            "source": "data:,{{ item.name }}",
+            "verification": {}
+          },
+          "mode": 420
+        }
+      ],
+      "directories": [
+        {
+          "filesystem": "root",
+          "group": {},
+          "path": "/opt/bin",
+          "user": {},
+          "mode": 493
+        }
+      ]
+    },
   "systemd": {}
 }
